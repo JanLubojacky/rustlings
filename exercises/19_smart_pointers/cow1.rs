@@ -36,10 +36,12 @@ mod tests {
     fn reference_no_mutation() {
         // No clone occurs because `input` doesn't need to be mutated.
         let vec = vec![0, 1, 2];
-        let mut input = Cow::from(&vec);
+        let mut input = Cow::from(&vec); // here it gets a reference
         abs_all(&mut input);
         // TODO: Replace `todo!()` with `Cow::Owned(_)` or `Cow::Borrowed(_)`.
-        assert!(matches!(input, todo!()));
+
+        // and the data is still only borrowed because no changes to it happened
+        assert!(matches!(input, Cow::Borrowed(_)));
     }
 
     #[test]
@@ -52,7 +54,7 @@ mod tests {
         let mut input = Cow::from(vec);
         abs_all(&mut input);
         // TODO: Replace `todo!()` with `Cow::Owned(_)` or `Cow::Borrowed(_)`.
-        assert!(matches!(input, todo!()));
+        assert!(matches!(input, Cow::Owned(_)));
     }
 
     #[test]
@@ -61,9 +63,10 @@ mod tests {
         // numbers are absolute). In this case, the call to `to_mut()` in the
         // `abs_all` function returns a reference to the same data as before.
         let vec = vec![-1, 0, 1];
-        let mut input = Cow::from(vec);
+        let mut input = Cow::from(vec); // here Cow owns the data so it can mutate
+                                                        // it at will
         abs_all(&mut input);
         // TODO: Replace `todo!()` with `Cow::Owned(_)` or `Cow::Borrowed(_)`.
-        assert!(matches!(input, todo!()));
+        assert!(matches!(input, Cow::Owned(_)));
     }
 }
